@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ng-canvasArea</title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.25/angular.min.js"></script>
+  <script src="../src/ng-canvasArea.js"></script>
+
+  <script>
+    (function() {
+      var app = angular.module('ngCanvasAreaDemo', ['ngCanvasArea']);
+      app.controller('DemoController', function($scope) {
+        $scope.obj = {};
+
+        $scope.obj.src = 'http://images.cdn.autocar.co.uk/sites/autocar.co.uk/files/styles/gallery_slide/public/images/car-reviews/first-drives/legacy/renault-kadjar-ll-studio-1.jpg?itok=ZbdH9-ga';
+
+        $scope.obj.points = [];
+
+        $scope.obj.maxPoints = 4;
+
+        $scope.copyObj = angular.copy($scope.obj);
+
+        $scope.reload = function() {
+          $scope.obj = $scope.copyObj;
+          $scope.obj.points = [];
+        };
+
+        $scope.postPoints = function() {
+          console.log(JSON.stringify($scope.obj.points));
+        };
+
+        $scope.changeImage = function() {
+          $scope.obj.src = 'http://m1.dk.f6m.fr/biler/personbiler/kadjar/kadjar/boites-fermees/attbf9b658680f94c9abb3268cf8410501a/Kadjar_van_renault.jpg';
+        };
+      });
+    })();
+  </script>
+</head>
+
+<body ng-app="ngCanvasAreaDemo">
+
+  <style>
+
+  </style>
+
+  <div class="container">
+    <h1>ng-canvasArea demo page</h1>
+    <div class="row" ng-controller="DemoController">
+      <form class="form-inline">
+        <h3>Settings:</h3>
+        <div class="form-group">
+          <label for="imageSrc">Image URL</label>
+          <input type="text" class="form-control" id="imageSrc" ng-model="copyObj.src">
+        </div>
+        <div class="form-group">
+          <label for="maxPoints">Max points:</label>
+          <input type="number" class="form-control" id="maxPoints" ng-model="copyObj.maxPoints">
+        </div>
+
+        <button class="btn btn-info" ng-click="reload()">Reload</button>
+      </form>
+      <br>
+      <button class="btn btn-lg" ng-click="postPoints()">Log points to console</button>
+      <button class="btn btn-lg" ng-click="changeImage()">New image</button>
+      <div ng-canvas-area imagepath="obj.src" points="obj.points" max-points="obj.maxPoints"></div>
+    </div>
+</body>
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</html>
