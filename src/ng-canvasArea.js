@@ -20,7 +20,7 @@
           scope.maxPoints = newVal;
         });
         scope.$watch('points', function(newVal) {
-          if(newVal.length == 0) {
+          if(newVal && newVal.length == 0) {
             scope.init();
           }
         });
@@ -34,6 +34,9 @@
 
       $scope.init = function() {
         $($element).html("");
+        if(!$scope.imagepath) {
+          return false;
+        }
         $scope.reset = $('<button class="btn btn-warning btn-lg"><span class="glyphicon glyphicon-trash"></span> Clear</button>');
         $scope.canvas = $('<canvas class=\'img-responsive\'>');
         $scope.ctx = $scope.canvas[0].getContext('2d');
@@ -56,6 +59,7 @@
           $($scope.canvas).on('mouseup', $scope.stopdrag);
         });
       };
+
       function Point(x, y) {
         this.x = x;
         this.y = y;
@@ -68,8 +72,6 @@
       Point.prototype.distance = function(p) {
         return Math.sqrt(Math.pow(this.x - p.x, 2) + Math.pow(this.y - p.y, 2));
       };
-
-
 
       $scope.resize = function() {
         $scope.canvas.attr('height', $scope.image.height).attr('width', $scope.image.width);
@@ -85,7 +87,7 @@
       $scope.draw = function() {
         $scope.ctx.canvas.width = $scope.ctx.canvas.width;
 
-        if ($scope.points.length < 1) {
+        if (!$scope.points || $scope.points.length < 1) {
           return false;
         }
         $scope.ctx.globalCompositeOperation = 'destination-over';
@@ -189,6 +191,8 @@
           var det = (p2.x - p1.x) * (candidate.y - p1.y) - (candidate.x - p1.x) * (p2.y - p1.y);
           if (det > 0) return true;
           if (det < 0) return false;
+          p1 = new Point(p1.x, p1.y);
+          p2 = new Point(p2.x, p2.y);
           return p1.distance(candidate) > p1.distance(p2);
         }
 
@@ -199,22 +203,29 @@
         for (var i = 1; i != N; i++) {
           if (points[i].y < points[min].y) min = i;
         }
-        var hull_point = points[min];
+        var hull_point = new Point(points[min].x, points[min].y);
 
         do {
           hull.push(hull_point);
 
-          var end_point = points[0];
+          var end_point = new Point(points[0].x, points[0].y);
+
           for (var i = 1; i != N; i++) {
             if (hull_point.equals(end_point) || left_oriented(hull_point,
                 end_point,
                 points[i])) {
-              end_point = points[i];
+              end_point = new Point(points[i].x, points[i].y);
             }
           }
           hull_point = end_point;
         }
         while (!end_point.equals(hull[0]));
+        hull = hull.map(function(point) {
+          return {
+            'x': point.x,
+            'y': point.y
+          }
+        });
         return hull;
       };
     }
